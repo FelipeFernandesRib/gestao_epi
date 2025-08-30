@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Lista de Colaboradores</h2>
+<a href="{% url 'criar_colaborador' %}"> Novo Colaborador</a>
+<table>
+  <tr>
+    <th>Nome</th>
+    <th>Matrícula</th>
+    <th>Cargo</th>
+    <th>Ações</th>
+  </tr>
+  {% for c in colaboradores %}
+  <tr>
+    <td>{{ c.nome }}</td>
+    <td>{{ c.matricula }}</td>
+    <td>{{ c.cargo }}</td>
+    <td>
+      <a href="{% url 'editar_colaborador' c.id %}"> Editar</a> |
+      <a href="{% url 'excluir_colaborador' c.id %}"> Excluir</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
