@@ -1,0 +1,44 @@
+#  Arquivos Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+#  Diretórios e arquivos do Django
+db.sqlite3
+*.sqlite3
+*.log
+
+#  Arquivos de ambiente e configurações sensíveis
+.env
+*.env
+
+#  Dependências e pacotes
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+#  Testes e relatórios
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+#  IDEs e editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+#  Arquivos temporários e de sistema
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+

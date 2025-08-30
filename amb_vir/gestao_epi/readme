@@ -1,0 +1,32 @@
+# Sistema de Gestão de EPIs
+
+ CRUD de Colaboradores (Criar, Listar, Editar, Excluir)
+ gestao_epi/
+│ manage.py
+│ README.md
+│ requirements.txt
+│
+├── gestao_epi/ # Configurações principais do Django
+│
+├── colaboradores/ # App de colaboradores (CRUD)
+│ ├── models.py
+│ ├── views.py
+│ ├── forms.py
+│ ├── urls.py
+│ └── templates/colaboradores/
+│ ├── lista.html
+│ ├── form.html
+│ └── confirm_delete.html
+
+Autor
+
+Felipe Fernandes
+
+## 📌 Documentação Visual
+
+### Diagrama do Sistema
+![Diagrama do Sistema](C:\Users\lipe0\OneDrive\Documentos\Atividade presencial\30-08\Django\amb_vir\gestao_epi\diagrama.mwb)
+
+### Fluxo de Telas
+### Wireframe da Interface
+[📄 Ver wireframe (PDF)](./wireframe.pdf)
