@@ -4,7 +4,6 @@
  gestao_epi/
 │ manage.py
 │ README.md
-│ requirements.txt
 │
 ├── gestao_epi/ # Configurações principais do Django
 │
@@ -22,11 +21,3 @@ Autor
 
 Felipe Fernandes
 
-## 📌 Documentação Visual
-
-### Diagrama do Sistema
-![Diagrama do Sistema] (./diagrama.png)
-
-### Fluxo de Telas
-### Wireframe da Interface
-[📄 Ver wireframe (PDF)](./wireframe.pdf)
