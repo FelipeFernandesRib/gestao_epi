@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'colaboradores',
+    'epis',
+    'emprestimos',
 ]
 
 MIDDLEWARE = [
@@ -77,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestao_epi',
-        'USER': 'usuario',    
-        'PASSWORD': 'senha',   
+        'USER': 'root',    
+        'PASSWORD': 'lipe628864F@',   
         'HOST': 'localhost',
         'PORT': '3306',
     }
