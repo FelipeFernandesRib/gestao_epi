@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestao_epi',
-        'USER': 'root',    
-        'PASSWORD': 'lipe628864F@',   
+        'USER': '',    
+        'PASSWORD': '',   
         'HOST': 'localhost',
         'PORT': '3306',
     }
