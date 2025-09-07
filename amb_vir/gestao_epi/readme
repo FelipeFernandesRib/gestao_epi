@@ -51,7 +51,7 @@ gestao_epi/
 │ ├── urls.py
 │ └── views.py
 │
-├── emprestimos/        # App para gerenciar o empréstimo e devolução de EPIs
+├── emprestimos/      # App para gerenciar o empréstimo e devolução de EPIs
 │ ├── migrations/
 │ ├── admin.py
 │ ├── apps.py

@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./amb_vir/gestao_epi"
+    ]
+}

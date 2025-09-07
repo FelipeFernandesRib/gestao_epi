@@ -18,6 +18,6 @@ class Migration(migrations.Migration):
                 ('nome', models.CharField(max_length=100)),
                 ('matricula', models.CharField(max_length=20, unique=True)),
                 ('cargo', models.CharField(max_length=50)),
-            ],
+            ], 
         ),
     ]
