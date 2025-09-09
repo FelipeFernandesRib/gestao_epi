@@ -1,0 +1,30 @@
+{% extends 'basefinal.html' %}
+{% block content %}
+    <h2>Lista de Empréstimos</h2>
+    <a href="{% url 'criar_emprestimo' %}" class="btn">+ Novo Empréstimo</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Colaborador</th>
+                <th>EPI</th>
+                <th>Data Empréstimo</th>
+                <th>Data Devolução</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+                <td>{{ emprestimo.colaborador }}</td>
+                <td>{{ emprestimo.epi }}</td>
+                <td>{{ emprestimo.data_emprestimo }}</td>
+                <td>{{ emprestimo.data_devolucao }}</td>
+                <td>
+                    <a href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
+                    <a href="{% url 'excluir_emprestimo' emprestimo.id %}">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

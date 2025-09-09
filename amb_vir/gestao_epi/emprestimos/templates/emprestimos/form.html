@@ -1,0 +1,10 @@
+{% extends "basefinal.html" %}
+{% block content %}
+    <h2>Novo Empréstimo</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Salvar</button>
+    </form>
+    <a href="{% url 'lista_emprestimos' %}" class="btn-secondary">Voltar</a>
+{% endblock %}
