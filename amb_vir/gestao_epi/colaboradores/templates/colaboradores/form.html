@@ -1,11 +1,19 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'basefinal.html' %}
 
-<h2>{{ form.instance.id|yesno:"Editar Colaborador,Novo Colaborador" }}</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Salvar</button>
-</form>
-<a href="{% url 'lista_colaboradores' %}">Voltar</a>
+{% block content %}
+<div class="form-box">
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_nome">Nome:</label>
+        {{ form.nome }}
+
+        <label for="id_matricula">Matrícula:</label>
+        {{ form.matricula }}
+
+        <label for="id_cargo">Cargo:</label>
+        {{ form.cargo }}
+
+        <button type="submit">Salvar</button>
+    </form>
+</div>
 {% endblock %}

@@ -1,12 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'basefinal.html' %}
+
 {% block content %}
+<div class="form-box">
+    <h2>Confirmação</h2>
+    <p>Tem certeza que deseja excluir o colaborador <b>{{ object.nome }}</b>?</p>
 
-<h1>Excluir Colaborador</h1>
-<p>Tem certeza que deseja excluir {{ colaborador.nome }}?</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Sim, excluir</button>
-  <a href="{% url 'lista_colaboradores' %}">Cancelar</a>
-</form>
-
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirmar</button>
+    </form>
+    <a href="{% url 'lista_colaboradores' %}" class="btn btn-secondary">Cancelar</a>
+</div>
 {% endblock %}
