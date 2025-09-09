@@ -17,7 +17,7 @@ Este projeto tem como objetivo desenvolver um sistema de gerenciamento de Equipa
 
 ### Requisitos Funcionais
 Estes requisitos descrevem o que o sistema deve fazer.
-* **RF01 (Novo) - Gerenciamento de Empréstimos e Status: O sistema deve permitir que o técnico de segurança registre o empréstimo de EPIs para um colaborador. Após o registro, o sistema deve atualizar automaticamente o status do item como "emprestado" e o status do colaborador como "com EPIs em uso",
+* **RF01 - Gerenciamento de Empréstimos e Status: O sistema deve permitir que o técnico de segurança registre o empréstimo de EPIs para um colaborador. Após o registro, o sistema deve atualizar automaticamente o status do item como "emprestado" e o status do colaborador como "com EPIs em uso",
 * **RF02 - Gerenciamento de Colaboradores:** O sistema deve permitir o cadastro, a edição e a exclusão de colaboradores, com informações como nome, cargo, número de registro e EPIs necessários.
 * **RF03 - Gerenciamento de EPIs:** O sistema deve permitir o cadastro, a edição e a exclusão de EPIs, incluindo informações como nome, descrição, quantidade em estoque e validade. O sistema deve também ser capaz de notificar sobre EPIs com estoque baixo ou próximos do vencimento.
 * **RF04 - Controle de Empréstimo e Devolução:** O sistema deve registrar o empréstimo de EPIs para um colaborador específico, vinculando o item à sua ficha. Deve também registrar a devolução do EPI, atualizando o estoque.
