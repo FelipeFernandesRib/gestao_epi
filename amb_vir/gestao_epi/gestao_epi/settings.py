@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'colaboradores',
     'epis',
     'emprestimos',
+
 ]
 
 MIDDLEWARE = [
@@ -57,10 +58,11 @@ ROOT_URLCONF = 'gestao_epi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -79,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestao_epi',
-        'USER': '',    
-        'PASSWORD': '',   
+        'USER': 'root',    
+        'PASSWORD': 'lipe628864F@',   
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -122,6 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+import os
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

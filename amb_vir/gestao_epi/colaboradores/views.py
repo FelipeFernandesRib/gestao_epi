@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Colaborador
 from .forms import ColaboradorForm
 
+
 def lista_colaboradores(request):
     colaboradores = Colaborador.objects.all()
     return render(request, 'colaboradores/lista.html', {'colaboradores': colaboradores})
