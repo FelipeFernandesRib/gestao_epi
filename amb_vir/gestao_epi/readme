@@ -38,33 +38,50 @@ gestao_epi/
 │ README.md
 │
 ├── gestao_epi/         # Configurações principais do Django
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
 │
 ├── colaboradores/      # App para gerenciar o CRUD de colaboradores
-│ ├── migrations/
-│ ├── templates/
-│ │ ├── colaboradores/
-│ │ └── base.html
-│ ├── admin.py
-│ ├── apps.py
-│ ├── forms.py
-│ ├── models.py
-│ ├── urls.py
-│ └── views.py
+│   ├── migrations/
+│   ├── templates/
+│   │   └── colaboradores/
+│   │       ├── form.html
+│   │       ├── lista.html
+│   │       └── confirm_delete.html
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
 │
-├── emprestimos/      # App para gerenciar o empréstimo e devolução de EPIs
-│ ├── migrations/
-│ ├── admin.py
-│ ├── apps.py
-│ ├── models.py
-│ ├── urls.py
-│ └── views.py
+├── emprestimos/        # App para gerenciar o empréstimo e devolução de EPIs
+│   ├── migrations/
+│   ├── templates/
+│   │   └── emprestimos/
+│   │       ├── form.html
+│   │       ├── lista.html
+│   │       └── confirm_delete.html
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
 │
 ├── epis/               # App para gerenciar o CRUD de EPIs
-│ ├── admin.py
-│ ├── apps.py
-│ ├── models.py
-│ ├── urls.py
-│ └── views.py
+│   ├── migrations/
+│   ├── templates/
+│   │   └── epis/
+│   │       ├── form.html
+│   │       ├── lista.html
+│   │       └── confirm_delete.html
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
 
 
 ---
