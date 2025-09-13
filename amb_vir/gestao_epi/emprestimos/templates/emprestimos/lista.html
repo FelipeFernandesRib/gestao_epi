@@ -1,14 +1,18 @@
 {% extends 'basefinal.html' %}
 {% block content %}
+
+<div class="list-box">
     <h2>Lista de Empréstimos</h2>
-    <a href="{% url 'criar_emprestimo' %}" class="btn">+ Novo Empréstimo</a>
-    <table>
+    <a href="{% url 'criar_emprestimo' %}" class="btn-adi">+ Novo Empréstimo</a>
+   
+    <table class="styled-table">
         <thead>
             <tr>
                 <th>Colaborador</th>
                 <th>EPI</th>
                 <th>Data Empréstimo</th>
                 <th>Data Devolução</th>
+                <th>Status</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -17,14 +21,27 @@
             <tr>
                 <td>{{ emprestimo.colaborador }}</td>
                 <td>{{ emprestimo.epi }}</td>
-                <td>{{ emprestimo.data_emprestimo }}</td>
-                <td>{{ emprestimo.data_devolucao }}</td>
+                <td>{{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</td>
                 <td>
-                    <a href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
-                    <a href="{% url 'excluir_emprestimo' emprestimo.id %}">Excluir</a>
+                    {% if emprestimo.data_devolucao %}
+                        {{ emprestimo.data_devolucao|date:"d/m/Y H:i" }}
+                    {% else %}
+                        ---
+                    {% endif %}
+                </td>
+                <td>{{ emprestimo.status }}</td>
+                <td>
+                    {% if emprestimo.status == "EMPRESTADO" %}
+                        <a class="btn-edi" href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
+                        <a class="btn btn-secondary" href="{% url 'devolver_emprestimo' emprestimo.id %}">Devolver</a>
+                        <a class="btn btn-danger" href="{% url 'marcar_perdido' emprestimo.id %}">Marcar Perdido</a>
+                    {% else %}
+                        <span style="color: gray;">(Finalizado)</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>    
 {% endblock %}

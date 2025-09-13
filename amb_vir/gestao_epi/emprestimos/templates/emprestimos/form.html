@@ -1,10 +1,18 @@
-{% extends "basefinal.html" %}
+{% extends 'basefinal.html' %}
 {% block content %}
-    <h2>Novo Empréstimo</h2>
+
+<div class="form-box">
+    <h2>{% if form.instance.pk %}Editar Empréstimo{% else %}Novo Empréstimo{% endif %}</h2>
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn">Salvar</button>
+
+        <button type="submit" class="btn-adi">
+            {% if form.instance.pk %}Salvar Alterações{% else %}Registrar Empréstimo{% endif %}
+        </button>
+        <a href="{% url 'lista_emprestimos' %}" class="btn-cancel">Cancelar</a>
     </form>
-    <a href="{% url 'lista_emprestimos' %}" class="btn-secondary">Voltar</a>
+</div>
+
 {% endblock %}
