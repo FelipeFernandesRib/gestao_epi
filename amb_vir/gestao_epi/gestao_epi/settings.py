@@ -81,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestao_epi',
-        'USER': 'root',    
-        'PASSWORD': 'lipe628864F@',   
+        'USER': '',    
+        'PASSWORD': '',   
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -122,6 +122,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+
 
 STATIC_URL = 'static/'
 
