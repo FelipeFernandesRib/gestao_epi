@@ -1,0 +1,108 @@
+{% extends 'basefinal.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container relatorios mt-4">
+    <h2 class="mb-4">Relatórios de Empréstimos por Colaborador</h2>
+    
+    <!-- Card de Pesquisa VERTICAL -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">🔍 Pesquisar Colaborador</h5>
+            
+            <!-- Formulário VERTICAL -->
+            <form method="get">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label for="colaboradorInput" class="form-label">Nome do Colaborador</label>
+                        <input type="text" class="form-control" id="colaboradorInput" 
+                               name="colaborador" placeholder="Digite o nome do colaborador..." 
+                               value="{{ colaborador_pesquisa }}">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            🔎 Pesquisar
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'relatorios_emprestimos' %}" class="btn btn-outline-secondary w-100">
+                            🗑️ Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    {% if colaborador_pesquisa %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                📊 Resultados para: <strong>"{{ colaborador_pesquisa }}"</strong>
+                <span class="badge bg-primary ms-2">{{ total_emprestimos }} resultado(s)</span>
+            </h5>
+        </div>
+        
+        <div class="card-body">
+            {% if emprestimos %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Colaborador</th>
+                            <th>EPI</th>
+                            <th class="text-center">Quantidade</th>
+                            <th>Data Empréstimo</th>
+                            <th>Data Devolução</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emprestimo in emprestimos %}
+                        <tr>
+                            <td>{{ emprestimo.colaborador.nome }}</td>
+                            <td>{{ emprestimo.epi.nome }}</td>
+                            <td class="text-center">{{ emprestimo.quantidade }}</td>
+                            <td>{{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if emprestimo.data_devolucao %}
+                                    {{ emprestimo.data_devolucao|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge 
+                                    {% if emprestimo.status == 'EMPRESTADO' %}bg-warning text-dark
+                                    {% elif emprestimo.status == 'DEVOLVIDO' %}bg-success
+                                    {% elif emprestimo.status == 'PERDIDO' %}bg-danger
+                                    {% endif %}">
+                                    {{ emprestimo.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhum empréstimo encontrado para o colaborador "{{ colaborador_pesquisa }}".
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- Mensagem inicial quando não há pesquisa -->
+    <div class="alert alert-secondary text-center">
+        <h5>Busque por um colaborador</h5>
+        <p class="mb-0">Digite o nome de um colaborador no campo acima para visualizar seus empréstimos.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

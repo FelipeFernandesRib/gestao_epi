@@ -7,5 +7,5 @@ urlpatterns = [
     path('editar/<int:id>/', views.editar_emprestimo, name='editar_emprestimo'),
     path('devolver/<int:pk>/', views.devolver_emprestimo, name='devolver_emprestimo'),
     path('<int:pk>/perdido/', views.marcar_perdido, name='marcar_perdido'),
-    
+     path('relatorios/', views.relatorios_emprestimos, name='relatorios_emprestimos'),
 ]

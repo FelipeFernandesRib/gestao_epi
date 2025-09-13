@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from .models import Emprestimo
 from .forms import EmprestimoForm
+from django.db.models import Q
 
 def lista_emprestimos(request):
     emprestimos = Emprestimo.objects.all()
@@ -69,3 +70,21 @@ def marcar_perdido(request, pk):
         messages.warning(request, "Este empréstimo não pode ser marcado como perdido.")
     
     return redirect('lista_emprestimos')
+
+def relatorios_emprestimos(request):
+    colaborador_nome = request.GET.get('colaborador', '')
+    emprestimos = Emprestimo.objects.all()
+    
+    if colaborador_nome:
+        # Busca por nome do colaborador
+        emprestimos = emprestimos.filter(
+            Q(colaborador__nome__icontains=colaborador_nome)
+        )
+    
+    context = {
+        'emprestimos': emprestimos,
+        'colaborador_pesquisa': colaborador_nome,
+        'total_emprestimos': emprestimos.count(),
+    }
+    
+    return render(request, 'emprestimos/relatorios.html', context)

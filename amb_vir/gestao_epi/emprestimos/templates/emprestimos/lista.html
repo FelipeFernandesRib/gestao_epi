@@ -33,8 +33,8 @@
                 <td>
                     {% if emprestimo.status == "EMPRESTADO" %}
                         <a class="btn-edi" href="{% url 'editar_emprestimo' emprestimo.id %}">Editar</a>
-                        <a class="btn btn-secondary" href="{% url 'devolver_emprestimo' emprestimo.id %}">Devolver</a>
-                        <a class="btn btn-danger" href="{% url 'marcar_perdido' emprestimo.id %}">Marcar Perdido</a>
+                        <a class="btn-dev" href="{% url 'devolver_emprestimo' emprestimo.id %}">Devolver</a>
+                        <a class="btn-per" href="{% url 'marcar_perdido' emprestimo.id %}">Perdido</a>
                     {% else %}
                         <span style="color: gray;">(Finalizado)</span>
                     {% endif %}

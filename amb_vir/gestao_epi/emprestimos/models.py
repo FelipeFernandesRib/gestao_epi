@@ -22,11 +22,8 @@ class Emprestimo(models.Model):
             self.status = "DEVOLVIDO"
             self.data_devolucao = timezone.now()
             self.save()
-            
-            # ATUALIZA O ESTOQUE - EPI DEVOLVIDO VOLTA PARA DISPONÍVEL
-            # A propriedade @property já calcula automaticamente, então só precisa salvar
-            # Mas precisamos garantir que a quantidade_total não foi alterada
-            pass  # Não precisa fazer nada aqui, a propriedade já calcula corretamente
+             
+            pass 
     
     def is_em_andamento(self):
         return self.status == "EMPRESTADO"
