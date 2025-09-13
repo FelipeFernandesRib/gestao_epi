@@ -1,0 +1,36 @@
+{% extends 'basefinal.html' %}
+{% block content %}
+
+<div class="dashboard-cards">
+    <div class="card">
+        <h3>Total de Colaboradores</h3>
+        <div class="stats stats-colaboradores">{{ total_colaboradores }}</div>
+        <p>Colaboradores cadastrados no sistema</p>
+    </div>
+
+    <div class="card">
+        <h3>Total de EPIs</h3>
+        <div class="stats stats-epis">{{ total_epis }}</div>
+        <p>Equipamentos de proteção individual</p>
+    </div>
+
+    <div class="card">
+        <h3>Empréstimos Ativos</h3>
+        <div class="stats stats-emprestimos">{{ emprestimos_ativos }}</div>
+        <p>EPIs emprestados no momento</p>
+    </div>
+
+    <div class="card">
+        <h3>EPIs com Baixo Estoque</h3>
+        <div class="stats stats-estoque">{{ epis_baixo_estoque }}</div> <p>Necessitam de reposição urgente</p>
+    </div>
+</div>
+
+<div class="welcome-card">
+    <h3>Bem-vindo ao Sistema de Gestão de EPIs</h3>
+    <p>O sistema permite o controle completo dos equipamentos de proteção individual,
+        desde o cadastro até o empréstimo para colaboradores.</p>
+    <p>Use o menu lateral para navegar entre as diferentes funcionalidades do sistema.</p>
+</div>
+
+{% endblock %}
