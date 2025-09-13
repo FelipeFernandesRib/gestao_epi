@@ -1,5 +1,38 @@
 {% extends 'basefinal.html' %}
-
 {% block content %}
-    <h1>Lista de EPIs</h1>
+<div class="list-box">
+    <h2>Lista de EPIs</h2>
+    <a href="{% url 'criar_epi' %}" class="btn-adi">+ Adicionar EPI</a>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>CA</th>
+                <th>Qtd. Total</th>
+                <th>Qtd. Disponível</th>
+                <th>Validade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for epi in epis %}
+            <tr>
+                <td>{{ epi.nome }}</td>
+                <td>{{ epi.tipo }}</td>
+                <td>{{ epi.certificado_aprovacao }}</td>
+                <td>{{ epi.quantidade_total }}</td>
+                <td>{{ epi.quantidade_disponivel }}</td>
+                <td>{{ epi.validade|date:"d/m/Y"|default:"Não informada" }}</td>
+                <td>
+                    <a href="{% url 'editar_epi' epi.id %}" class="btn-edi">Editar</a>
+                    <a href="{% url 'excluir_epi' epi.id %}" class="btn-exc">Excluir</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">Nenhum EPI cadastrado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
