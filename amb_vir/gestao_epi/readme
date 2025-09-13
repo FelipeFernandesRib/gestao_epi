@@ -12,7 +12,7 @@ Empréstimo de EPIs: Registro de empréstimos e devoluções de EPIs para cada c
 Relatórios: Geração de relatórios de uso e de estoque para auditorias internas.
 
 Protótipos de Interface
-https://docs/wireframes.png
+![Wireframes da Aplicação](docs/wireframes.png)
 
 Telas Representadas:
 Cadastro de Colaboradores - Formulário com nome, matrícula e cargo
@@ -22,7 +22,7 @@ Cadastro de EPIs - Formulário com dados do EPI incluindo CA e validade
 Registro de Empréstimos - Formulário para associar colaborador, EPI e quantidade
 
 Estrutura do Banco de Dados
-https://docs/database_diagram.png
+![Diagrama do Banco de Dados](docs/database_diagram.png)
 
 Requisitos do Sistema
 Requisitos Funcionais
