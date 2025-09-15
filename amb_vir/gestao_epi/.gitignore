@@ -42,3 +42,8 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
+#  Arquivos específicos do projeto
+.env
+.env.local
+.env.production
+*.env
