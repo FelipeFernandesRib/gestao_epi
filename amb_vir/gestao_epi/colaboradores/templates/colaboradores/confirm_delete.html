@@ -3,7 +3,7 @@
 {% block content %}
 <div class="form-box">
     <h2>Confirmação</h2>
-    <p>Tem certeza que deseja excluir o colaborador <b>{{ object.nome }}</b>?</p>
+    <p>Tem certeza que deseja excluir o colaborador <b>{{ colaborador.nome }}</b>?</p>
 
     <form method="post">
         {% csrf_token %}
