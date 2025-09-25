@@ -4,46 +4,72 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Emprestimo
 from .forms import EmprestimoForm
+from colaboradores.models import Colaborador
+from epis.models import Epi
 
 def lista_emprestimos(request):
     emprestimos = Emprestimo.objects.all().order_by('-data_emprestimo')
     return render(request, 'emprestimos/lista.html', {'emprestimos': emprestimos})
 
 def criar_emprestimo(request):
+    colaboradores = Colaborador.objects.all()
+    epis = Epi.objects.all()
+    
     if request.method == "POST":
         form = EmprestimoForm(request.POST)
         if form.is_valid():
             try:
                 emprestimo = form.save()
-                messages.success(request, f"✅ Empréstimo registrado com sucesso! Status: {emprestimo.get_status_display()}")
+                messages.success(request, "✅ Empréstimo registrado com sucesso!")
                 return redirect("lista_emprestimos")
             except Exception as e:
-                messages.error(request, f"❌ Erro ao registrar empréstimo: {str(e)}")
+                messages.error(request, f"❌ Erro: {str(e)}")
         else:
-            messages.error(request, "❌ Erro no formulário. Verifique os dados.")
+            # Debug: mostrar erros do formulário
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erro no campo {field}: {error}")
     else:
         form = EmprestimoForm()
-    
-    return render(request, "emprestimos/form.html", {"form": form})
+
+    return render(request, "emprestimos/form.html", {
+        "form": form,
+        "colaboradores": colaboradores,
+        "epis": epis,
+        "emprestimo": None  # Para diferenciar criação vs edição
+    })
 
 def editar_emprestimo(request, id):
     emprestimo = get_object_or_404(Emprestimo, id=id)
+    colaboradores = Colaborador.objects.all()
+    epis = Epi.objects.all()
 
     if request.method == 'POST':
         form = EmprestimoForm(request.POST, instance=emprestimo)
         if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "✅ Empréstimo atualizado com sucesso!")
-                return redirect('lista_emprestimos')
-            except Exception as e:
-                messages.error(request, f"❌ Erro ao atualizar empréstimo: {str(e)}")
+            if form.has_changed():
+                try:
+                    form.save()
+                    messages.success(request, "✅ Empréstimo atualizado com sucesso!")
+                except Exception as e:
+                    messages.error(request, f"❌ Erro ao atualizar empréstimo: {str(e)}")
+            else:
+                messages.info(request, "ℹ️ Nenhuma alteração foi realizada.")
+            return redirect('lista_emprestimos')
         else:
-            messages.error(request, "❌ Erro no formulário. Verifique os dados.")
+            # Debug: mostrar erros do formulário
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erro no campo {field}: {error}")
     else:
         form = EmprestimoForm(instance=emprestimo)
-    
-    return render(request, 'emprestimos/form.html', {'form': form, 'emprestimo': emprestimo})
+
+    return render(request, 'emprestimos/form.html', {
+        'form': form, 
+        'emprestimo': emprestimo,  # Passa o objeto emprestimo para o template
+        "colaboradores": colaboradores,
+        "epis": epis
+    })
 
 def devolver_emprestimo(request, pk):
     emprestimo = get_object_or_404(Emprestimo, pk=pk)
@@ -52,11 +78,17 @@ def devolver_emprestimo(request, pk):
         status = request.POST.get('status', 'DEVOLVIDO')
         observacao = request.POST.get('observacao', '')
         
+        if status in ['DANIFICADO', 'PERDIDO'] and not observacao:
+            messages.error(request, "❌ Observação é obrigatória para status Danificado ou Perdido.")
+            return redirect('lista_emprestimos')
+        
         try:
             emprestimo.devolver(status=status, observacao=observacao)
             messages.success(request, f"✅ EPI devolvido com sucesso! Status: {emprestimo.get_status_display()}")
         except Exception as e:
             messages.error(request, f"❌ Erro ao devolver EPI: {str(e)}")
+    else:
+        return render(request, 'emprestimos/devolver.html', {'emprestimo': emprestimo})
     
     return redirect('lista_emprestimos')
 
@@ -67,9 +99,9 @@ def marcar_perdido(request, pk):
         try:
             emprestimo.status = 'PERDIDO'
             emprestimo.data_devolucao = timezone.now()
+            emprestimo.observacao_devolucao = 'EPI marcado como perdido'
             emprestimo.save()
             
-            # Atualiza estoque para EPI perdido
             emprestimo.epi.quantidade_total -= emprestimo.quantidade
             emprestimo.epi.save()
             
