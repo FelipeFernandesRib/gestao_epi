@@ -1,18 +1,219 @@
 {% extends 'basefinal.html' %}
+{% load static %}
+
 {% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">{% if emprestimo %}Editar Empréstimo{% else %}Novo Empréstimo{% endif %}</h2>
+        </div>
+        
+        <div class="card-body">
+            <form method="post" id="emprestimoForm">
+                {% csrf_token %}
+                
+                <!-- Mensagens -->
+                {% if messages %}
+                <div class="messages mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-<div class="form-box">
-    <h2>{% if form.instance.pk %}Editar Empréstimo{% else %}Novo Empréstimo{% endif %}</h2>
+                <!-- Linha 1: Colaborador -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="id_colaborador" class="form-label">Colaborador *</label>
+                        <select name="colaborador" id="id_colaborador" class="form-select" required>
+                            <option value="">Selecione um colaborador...</option>
+                            {% for colaborador in colaboradores %}
+                            <option value="{{ colaborador.id }}" 
+                                {% if form.colaborador.value|add:0 == colaborador.id %}selected{% endif %}>
+                                {{ colaborador.nome }} ({{ colaborador.matricula }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.colaborador.errors %}
+                        <div class="text-danger small">{{ form.colaborador.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="id_epi" class="form-label">EPI *</label>
+                        <select name="epi" id="id_epi" class="form-select" required>
+                            <option value="">Selecione um EPI...</option>
+                            {% for epi in epis %}
+                            <option value="{{ epi.id }}" 
+                                {% if form.epi.value|add:0 == epi.id %}selected{% endif %}
+                                data-estoque="{{ epi.quantidade_disponivel }}">
+                                {{ epi.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div id="estoque-info" class="form-text text-info mt-1">
+                            💡 Selecione um EPI para ver o estoque disponível
+                        </div>
+                        {% if form.epi.errors %}
+                        <div class="text-danger small">{{ form.epi.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+                <!-- Linha 2: Quantidade e Data Prevista -->
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="id_quantidade" class="form-label">Quantidade *</label>
+                        <input type="number" name="quantidade" id="id_quantidade" 
+                               class="form-control" min="1" value="{{ form.quantidade.value|default:'1' }}" required>
+                        {% if form.quantidade.errors %}
+                        <div class="text-danger small">{{ form.quantidade.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-5 mb-3">
+                        <label for="id_data_prevista_devolucao" class="form-label">Data Prevista Devolução</label>
+                        <input type="datetime-local" name="data_prevista_devolucao" id="id_data_prevista_devolucao" 
+                            class="form-control" 
+                            value="{% if form.data_prevista_devolucao.value %}{{ form.data_prevista_devolucao.value|date:'Y-m-d\TH:i' }}{% endif %}">
+                        <div class="form-text">Para empréstimos temporários</div>
+                        {% if form.data_prevista_devolucao.errors %}
+                        <div class="text-danger small">{{ form.data_prevista_devolucao.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="id_status" class="form-label">Status *</label>
+                        <select name="status" id="id_status" class="form-select" required>
+                            {% for value, label in form.fields.status.choices %}
+                                {% if not emprestimo %}
+                                    {# Novo empréstimo: só mostra EMPRESTADO e FORNECIDO #}
+                                    {% if value == "EMPRESTADO" or value == "FORNECIDO" %}
+                                    <option value="{{ value }}" 
+                                        {% if form.status.value == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                    {% endif %}
+                                {% else %}
+                                    {# Edição: mostra todos os status #}
+                                    <option value="{{ value }}" 
+                                        {% if form.status.value == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        {% if form.status.errors %}
+                        <div class="text-danger small">{{ form.status.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
 
-        <button type="submit" class="btn-adi">
-            {% if form.instance.pk %}Salvar Alterações{% else %}Registrar Empréstimo{% endif %}
-        </button>
-        <a href="{% url 'lista_emprestimos' %}" class="btn-cancel">Cancelar</a>
-    </form>
+                <!-- Observação (apenas na edição para status específicos) -->
+                {% if emprestimo %}
+                <div class="mb-3" id="observacao-container" style="display: none;">
+                    <label for="id_observacao_devolucao" class="form-label">Observação na Devolução</label>
+                    <textarea name="observacao_devolucao" id="id_observacao_devolucao" 
+                              class="form-control" rows="3" 
+                              placeholder="Descreva o estado do EPI...">{{ form.observacao_devolucao.value|default:'' }}</textarea>
+                    <div class="form-text">Obrigatório para status <strong>Danificado</strong> ou <strong>Perdido</strong></div>
+                    {% if form.observacao_devolucao.errors %}
+                    <div class="text-danger small">{{ form.observacao_devolucao.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Botões -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{% url 'lista_emprestimos' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        {% if emprestimo %}Salvar Alterações{% else %}Registrar Empréstimo{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
+<script>
+// Mostrar estoque disponível quando selecionar EPI
+function atualizarEstoque() {
+    const epiSelect = document.getElementById('id_epi');
+    const estoqueInfo = document.getElementById('estoque-info');
+    const quantidadeInput = document.getElementById('id_quantidade');
+    
+    if (epiSelect.value) {
+        const selectedOption = epiSelect.options[epiSelect.selectedIndex];
+        const estoqueDisponivel = selectedOption.getAttribute('data-estoque');
+        
+        if (estoqueDisponivel) {
+            const disponivel = parseInt(estoqueDisponivel);
+            estoqueInfo.innerHTML = `
+                <strong>📦 Estoque:</strong> ${disponivel} unidade(s) disponível(s)
+                ${disponivel === 0 ? '<span class="text-danger"> - SEM ESTOQUE</span>' : ''}
+            `;
+            
+            // Ajustar quantidade máxima
+            quantidadeInput.max = disponivel;
+            if (parseInt(quantidadeInput.value) > disponivel) {
+                quantidadeInput.value = Math.max(1, disponivel);
+            }
+        }
+    } else {
+        estoqueInfo.innerHTML = "💡 Selecione um EPI para ver o estoque disponível";
+    }
+}
+
+// Mostrar/ocultar observação baseado no status (apenas na edição)
+function toggleObservacao() {
+    const statusSelect = document.getElementById('id_status');
+    const observacaoContainer = document.getElementById('observacao-container');
+    const observacaoField = document.getElementById('id_observacao_devolucao');
+    
+    if (observacaoContainer && statusSelect) {
+        const status = statusSelect.value;
+        
+        if (status === "DANIFICADO" || status === "PERDIDO") {
+            observacaoContainer.style.display = 'block';
+            if (observacaoField) observacaoField.required = true;
+        } else {
+            observacaoContainer.style.display = 'none';
+            if (observacaoField) observacaoField.required = false;
+        }
+    }
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    const epiSelect = document.getElementById('id_epi');
+    const statusSelect = document.getElementById('id_status');
+    
+    if (epiSelect) {
+        epiSelect.addEventListener('change', atualizarEstoque);
+        atualizarEstoque(); // Executar on load
+    }
+    
+    if (statusSelect) {
+        statusSelect.addEventListener('change', toggleObservacao);
+        toggleObservacao(); // Executar on load
+    }
+});
+</script>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+.form-text {
+    font-size: 0.875rem;
+}
+</style>
 {% endblock %}
