@@ -1,0 +1,57 @@
+{% extends 'basefinal.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Devolver EPI</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Devolução: {{ emprestimo.epi.nome }}</h5>
+            <p><strong>Colaborador:</strong> {{ emprestimo.colaborador.nome }}</p>
+            <p><strong>Quantidade:</strong> {{ emprestimo.quantidade }}</p>
+            <p><strong>Data Empréstimo:</strong> {{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status da Devolução:</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="DEVOLVIDO">Devolvido</option>
+                        <option value="DANIFICADO">Danificado</option>
+                        <option value="PERDIDO">Perdido</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="observacao" class="form-label">Observação:</label>
+                    <textarea class="form-control" id="observacao" name="observacao" 
+                              rows="3" placeholder="Descreva o estado do EPI..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-success">Confirmar Devolução</button>
+                <a href="{% url 'lista_emprestimos' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('status');
+    const observacaoTextarea = document.getElementById('observacao');
+    
+    function toggleObservacaoObrigatoria() {
+        const status = statusSelect.value;
+        const obrigatorio = ['DANIFICADO', 'PERDIDO'].includes(status);
+        
+        observacaoTextarea.required = obrigatorio;
+        observacaoTextarea.closest('.mb-3').querySelector('.form-label').innerHTML = 
+            obrigatorio ? 'Observação <span class="text-danger">*</span>' : 'Observação';
+    }
+    
+    statusSelect.addEventListener('change', toggleObservacaoObrigatoria);
+    toggleObservacaoObrigatoria(); // Executar on load
+});
+</script>
+{% endblock %}
