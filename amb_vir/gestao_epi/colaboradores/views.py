@@ -7,7 +7,15 @@ from .forms import ColaboradorForm
 
 def lista_colaboradores(request):
     colaboradores = Colaborador.objects.all()
-    return render(request, 'colaboradores/lista.html', {'colaboradores': colaboradores})
+    
+    nome_pesquisa = request.GET.get('nome', '')
+    if nome_pesquisa:
+        colaboradores = colaboradores.filter(nome__icontains=nome_pesquisa)
+    
+    return render(request, 'colaboradores/lista.html', {
+        'colaboradores': colaboradores,
+        'nome_pesquisa': nome_pesquisa  # NOVO
+    })
 
 def criar_colaborador(request):
     if request.method == "POST":
