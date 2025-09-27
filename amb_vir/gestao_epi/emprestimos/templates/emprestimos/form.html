@@ -49,7 +49,8 @@
                             {% for epi in epis %}
                             <option value="{{ epi.id }}" 
                                 {% if form.epi.value|add:0 == epi.id %}selected{% endif %}
-                                data-estoque="{{ epi.quantidade_disponivel }}">
+                                data-estoque="{{ epi.quantidade_disponivel }}"
+                                data-quantidade-atual="{% if emprestimo and emprestimo.epi.id == epi.id %}{{ emprestimo.quantidade }}{% else %}0{% endif %}">
                                 {{ epi.nome }}
                             </option>
                             {% endfor %}
@@ -77,8 +78,8 @@
                     <div class="col-md-5 mb-3">
                         <label for="id_data_prevista_devolucao" class="form-label">Data Prevista Devolução</label>
                         <input type="datetime-local" name="data_prevista_devolucao" id="id_data_prevista_devolucao" 
-                            class="form-control" 
-                            value="{% if form.data_prevista_devolucao.value %}{{ form.data_prevista_devolucao.value|date:'Y-m-d\TH:i' }}{% endif %}">
+                               class="form-control" 
+                               value="{% if form.data_prevista_devolucao.value %}{{ form.data_prevista_devolucao.value|date:'Y-m-d\TH:i' }}{% endif %}">
                         <div class="form-text">Para empréstimos temporários</div>
                         {% if form.data_prevista_devolucao.errors %}
                         <div class="text-danger small">{{ form.data_prevista_devolucao.errors }}</div>
@@ -139,7 +140,7 @@
 </div>
 
 <script>
-// Mostrar estoque disponível quando selecionar EPI
+// Mostrar estoque disponível quando selecionar EPI (CORRIGIDO para edição)
 function atualizarEstoque() {
     const epiSelect = document.getElementById('id_epi');
     const estoqueInfo = document.getElementById('estoque-info');
@@ -148,18 +149,40 @@ function atualizarEstoque() {
     if (epiSelect.value) {
         const selectedOption = epiSelect.options[epiSelect.selectedIndex];
         const estoqueDisponivel = selectedOption.getAttribute('data-estoque');
+        const quantidadeAtual = selectedOption.getAttribute('data-quantidade-atual') || 0;
         
         if (estoqueDisponivel) {
             const disponivel = parseInt(estoqueDisponivel);
-            estoqueInfo.innerHTML = `
-                <strong>📦 Estoque:</strong> ${disponivel} unidade(s) disponível(s)
-                ${disponivel === 0 ? '<span class="text-danger"> - SEM ESTOQUE</span>' : ''}
-            `;
+            const qtdAtual = parseInt(quantidadeAtual);
+            const disponivelParaEdicao = disponivel + qtdAtual;
+            
+            let mensagemEstoque = `<strong>📦 Estoque Total:</strong> ${disponivel} unidade(s) disponível(s)`;
+            
+            // Se estiver editando e é o mesmo EPI, mostra informação especial
+            if (qtdAtual > 0) {
+                mensagemEstoque += `<br><strong>💡 Para esta edição:</strong> ${disponivelParaEdicao} unidade(s) disponível(s) (estoque + quantidade atual)`;
+            }
+            
+            if (disponivel === 0 && qtdAtual === 0) {
+                mensagemEstoque += '<span class="text-danger"> - SEM ESTOQUE</span>';
+            } else if (disponivel === 0 && qtdAtual > 0) {
+                mensagemEstoque += '<span class="text-warning"> - SEM ESTOQUE NOVO, mas pode ajustar este empréstimo</span>';
+            }
+            
+            estoqueInfo.innerHTML = mensagemEstoque;
             
             // Ajustar quantidade máxima
-            quantidadeInput.max = disponivel;
-            if (parseInt(quantidadeInput.value) > disponivel) {
-                quantidadeInput.value = Math.max(1, disponivel);
+            if (qtdAtual > 0) {
+                // Modo edição: permite até estoque + quantidade atual
+                quantidadeInput.max = disponivelParaEdicao;
+            } else {
+                // Modo novo: limita pelo estoque disponível
+                quantidadeInput.max = disponivel;
+            }
+            
+            // Garantir que a quantidade não exceda o máximo
+            if (parseInt(quantidadeInput.value) > quantidadeInput.max) {
+                quantidadeInput.value = Math.max(1, quantidadeInput.max);
             }
         }
     } else {
@@ -214,6 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 .form-text {
     font-size: 0.875rem;
+}
+.text-warning {
+    color: #856404 !important;
 }
 </style>
 {% endblock %}
