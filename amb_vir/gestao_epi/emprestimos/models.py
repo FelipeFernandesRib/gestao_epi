@@ -41,7 +41,6 @@ class Emprestimo(models.Model):
             self.data_devolucao = timezone.now()
             self.observacao_devolucao = observacao
             self.save()
-
     def is_em_andamento(self):
         return self.status in ['EMPRESTADO', 'EM_USO']
 
