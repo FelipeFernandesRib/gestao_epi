@@ -83,8 +83,18 @@ def devolver_emprestimo(request, pk):
             return redirect('lista_emprestimos')
         
         try:
+            # CORREÇÃO CRÍTICA: Atualizar estoque de danificados
+            if status == 'DANIFICADO':
+                emprestimo.epi.quantidade_danificada += emprestimo.quantidade
+                emprestimo.epi.save()
+                messages.success(request, f"✅ EPI devolvido como DANIFICADO. {emprestimo.quantidade} unidade(s) removida(s) do estoque útil.")
+            elif status == 'PERDIDO':
+                messages.success(request, f"✅ EPI marcado como PERDIDO. {emprestimo.quantidade} unidade(s) considerada(s) como perda.")
+            else:
+                messages.success(request, f"✅ EPI devolvido com sucesso! Status: {emprestimo.get_status_display()}")
+            
             emprestimo.devolver(status=status, observacao=observacao)
-            messages.success(request, f"✅ EPI devolvido com sucesso! Status: {emprestimo.get_status_display()}")
+            
         except Exception as e:
             messages.error(request, f"❌ Erro ao devolver EPI: {str(e)}")
     else:
