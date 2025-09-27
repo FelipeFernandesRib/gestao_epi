@@ -5,6 +5,19 @@
     <h2>Lista de Colaboradores</h2>
     <a class="btn-adi" href="{% url 'criar_colaborador' %}">+ Adicionar Colaborador</a>
 
+    <div style="margin: 15px 0;">
+        <form method="get" class="d-flex">
+            <input type="text" name="nome" class="form-control" 
+                   placeholder="Pesquisar por nome..." 
+                   value="{{ nome_pesquisa }}"
+                   style="max-width: 300px; margin-right: 10px;">
+            <button type="submit" class="btn-edi">🔍 Pesquisar</button>
+            {% if nome_pesquisa %}
+            <a href="{% url 'lista_colaboradores' %}" class="btn-cancel" style="margin-left: 10px;">Limpar</a>
+            {% endif %}
+        </form>
+    </div>
+
     <table class="styled-table">
         <thead>
             <tr>
@@ -21,16 +34,42 @@
                 <td>{{ colaborador.matricula }}</td>
                 <td>{{ colaborador.cargo }}</td>
                 <td>
-                    <a class= "btn-edi" href="{% url 'editar_colaborador' colaborador.id %}">Editar</a> |
-                    <a class= "btn-exc"href="{% url 'excluir_colaborador' colaborador.id %}">Excluir</a>
+                    <a class="btn-edi" href="{% url 'editar_colaborador' colaborador.id %}">Editar</a> |
+                    <a class="btn-exc" href="{% url 'excluir_colaborador' colaborador.id %}">Excluir</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4">Nenhum colaborador cadastrado.</td>
+                <td colspan="4">
+                    {% if nome_pesquisa %}
+                    Nenhum colaborador encontrado para "{{ nome_pesquisa }}".
+                    {% else %}
+                    Nenhum colaborador cadastrado.
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- NOVO: MOSTRAR RESULTADOS DA PESQUISA -->
+    {% if nome_pesquisa %}
+    <div class="alert alert-info" style="margin-top: 15px;">
+        🔍 Mostrando resultados para: <strong>"{{ nome_pesquisa }}"</strong>
+        | <strong>{{ colaboradores|length }}</strong> colaborador(es) encontrado(s)
+    </div>
+    {% endif %}
 </div>
+
+<style>
+.d-flex button {
+  padding: 8px 12px;
+  height: auto; 
+}
+.form-control {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+</style>
 {% endblock %}
