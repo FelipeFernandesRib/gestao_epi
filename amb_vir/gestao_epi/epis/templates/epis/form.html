@@ -1,27 +1,90 @@
 {% extends 'basefinal.html' %}
+{% load static %}
+
 {% block content %}
-
-<div class="form-box">
-    {% if form.instance.pk %}
-        <h2>Editar EPI</h2>
-    {% else %}
-        <h2>Adicionar EPI</h2>
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-fields">
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                    {{ field }}
-                </div>
+<div class="content">
+    <div class="form-box" style="width: 400px;">
+        {% if epi %}
+            <h2>Editar EPI</h2>
+        {% else %}
+            <h2>Adicionar EPI</h2>
+        {% endif %}
+        
+        <!-- Mensagens -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endfor %}
         </div>
-        <div class="form-actions">
-            <button type="submit" class="btn-save">Salvar</button>
-            <a href="{% url 'lista_epis' %}" class="btn-cancel">Cancelar</a>
-        </div>
-    </form>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Campos individuais para controle total -->
+            <div class="mb-3">
+                <label for="id_nome" class="form-label">Nome *</label>
+                <input type="text" name="nome" id="id_nome" class="form-control" 
+                       value="{{ form.nome.value|default:'' }}" required maxlength="100">
+                {% if form.nome.errors %}
+                <div class="text-danger small">{{ form.nome.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_tipo" class="form-label">Tipo *</label>
+                <input type="text" name="tipo" id="id_tipo" class="form-control" 
+                       value="{{ form.tipo.value|default:'' }}" required maxlength="50">
+                {% if form.tipo.errors %}
+                <div class="text-danger small">{{ form.tipo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_certificado_aprovacao" class="form-label">Certificado de Aprovação</label>
+                <input type="text" name="certificado_aprovacao" id="id_certificado_aprovacao" class="form-control" 
+                       value="{{ form.certificado_aprovacao.value|default:'' }}" maxlength="20">
+                {% if form.certificado_aprovacao.errors %}
+                <div class="text-danger small">{{ form.certificado_aprovacao.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_quantidade_total" class="form-label">Quantidade Total *</label>
+                <input type="number" name="quantidade_total" id="id_quantidade_total" class="form-control" 
+                       value="{{ form.quantidade_total.value|default:'0' }}" min="0" required>
+                {% if form.quantidade_total.errors %}
+                <div class="text-danger small">{{ form.quantidade_total.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- CAMPO VALIDADE CORRIGIDO -->
+            <div class="mb-3">
+                <label for="id_validade" class="form-label">Validade</label>
+                <input type="date" name="validade" id="id_validade" class="form-control" 
+                       value="{% if form.validade.value %}{{ form.validade.value|date:'Y-m-d' }}{% endif %}">
+                {% if form.validade.errors %}
+                <div class="text-danger small">{{ form.validade.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_descricao" class="form-label">Descrição</label>
+                <textarea name="descricao" id="id_descricao" class="form-control" rows="3">{{ form.descricao.value|default:'' }}</textarea>
+                {% if form.descricao.errors %}
+                <div class="text-danger small">{{ form.descricao.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save">Salvar</button>
+                <a href="{% url 'lista_epis' %}" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
