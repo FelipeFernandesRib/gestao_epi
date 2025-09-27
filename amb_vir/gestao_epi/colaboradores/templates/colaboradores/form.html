@@ -1,20 +1,51 @@
 {% extends 'basefinal.html' %}
+{% load static %}
 
 {% block content %}
-<div class="form-box">
-    <h2>Adicionar Colaborador</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label for="id_nome">Nome:</label>
-        {{ form.nome }}
+<div class="content">
+    <div class="form-box">
+        <h2>{% if colaborador %}Editar Colaborador{% else %}Adicionar Colaborador{% endif %}</h2>
+        
+        <!-- Mensagens -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-        <label for="id_matricula">Matrícula:</label>
-        {{ form.matricula }}
+        <form method="post">
+            {% csrf_token %}
+            
+            <label for="id_nome">Nome:</label>
+            {{ form.nome }}
+            {% if form.nome.errors %}
+            <div class="text-danger">{{ form.nome.errors }}</div>
+            {% endif %}
 
-        <label for="id_cargo">Cargo:</label>
-        {{ form.cargo }}
+            <label for="id_matricula">Matrícula:</label>
+            {{ form.matricula }}
+            {% if form.matricula.errors %}
+            <div class="text-danger">{{ form.matricula.errors }}</div>
+            {% endif %}
 
-        <button type="submit">Salvar</button>
-    </form>
+            <label for="id_cargo">Cargo:</label>
+            {{ form.cargo }}
+            {% if form.cargo.errors %}
+            <div class="text-danger">{{ form.cargo.errors }}</div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    {% if colaborador %}Salvar{% else %}Salvar{% endif %}
+                </button>
+                <a href="{% url 'lista_colaboradores' %}" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
