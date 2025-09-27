@@ -544,3 +544,103 @@ table th {
     background-color: #007bff;
     color: white;
 }
+
+/* ===== ESTILOS PARA FORMULÁRIOS COM BOTÕES LADO A LADO ===== */
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-adi {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-cancel {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+.btn-adi:hover {
+    background: #218838;
+}
+
+.btn-cancel:hover {
+    background: #545b62;
+    color: white;
+}
+
+/* Estilos para mensagens de erro nos formulários */
+.text-danger {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Ajustes específicos para formulários maiores */
+.form-box[style*="width: 400px"],
+.form-box[style*="width: 450px"] {
+    width: 400px !important;
+}
+
+/* Melhorias para campos de formulário */
+.form-box input, 
+.form-box select, 
+.form-box textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.form-box label {
+    display: block;
+    margin: 10px 0 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Estilo para informações de ajuda abaixo dos campos */
+.form-help {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Para agrupamento de campos em linha */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Ajuste para o conteúdo dos formulários */
+.content .form-box {
+    margin: 0 auto;
+}
