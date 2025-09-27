@@ -25,17 +25,25 @@ def criar_epi(request):
 
 def editar_epi(request, pk):
     epi = get_object_or_404(Epi, pk=pk)
+    
     if request.method == 'POST':
         form = EpiForm(request.POST, instance=epi)
         if form.is_valid():
-            form.save()
-            messages.success(request, '✅ EPI atualizado com sucesso!')  # ✅ Adicione mensagem
+            if form.has_changed():  # VERIFICA SE HOUVE ALTERAÇÕES
+                form.save()
+                messages.success(request, '✅ EPI atualizado com sucesso!')
+            else:
+                messages.info(request, 'ℹ️ Nenhuma alteração foi realizada.')
             return redirect('lista_epis')
         else:
-            messages.error(request, '❌ Erro ao atualizar EPI.')  # ✅ Adicione mensagem
+            messages.error(request, '❌ Erro ao atualizar EPI. Verifique os dados.')
     else:
         form = EpiForm(instance=epi)
-    return render(request, 'epis/form.html', {'form': form})
+    
+    return render(request, 'epis/form.html', {
+        'form': form,
+        'epi': epi  # Passa o objeto epi para o template
+    })
 
 def excluir_epi(request, pk):
     epi = get_object_or_404(Epi, pk=pk)
