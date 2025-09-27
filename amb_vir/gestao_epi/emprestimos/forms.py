@@ -40,7 +40,6 @@ class EmprestimoForm(forms.ModelForm):
         quantidade = cleaned_data.get("quantidade")
         status = cleaned_data.get("status")
         data_prevista_devolucao = cleaned_data.get("data_prevista_devolucao")
-        data_devolucao = cleaned_data.get('data_devolucao')
         observacao = cleaned_data.get('observacao_devolucao')
 
         # Validação de quantidade vs estoque (CORRIGIDA para edição)
@@ -67,16 +66,12 @@ class EmprestimoForm(forms.ModelForm):
                 'data_prevista_devolucao': 'A data prevista para devolução deve ser posterior à data e hora atuais.'
             })
 
-        # Validações condicionais para status de devolução
-        if status in ['DEVOLVIDO', 'DANIFICADO', 'PERDIDO']:
-            if not data_devolucao:
-                raise forms.ValidationError({
-                    'data_devolucao': 'Data de devolução é obrigatória para este status.'
-                })
-            
-            if status in ['DANIFICADO', 'PERDIDO'] and not observacao:
-                raise forms.ValidationError({
-                    'observacao_devolucao': 'Observação é obrigatória para status Danificado ou Perdido.'
-                })
+        # Validações condicionais para status de devolução (CORREÇÃO CRÍTICA)
+        if status in ['DANIFICADO', 'PERDIDO'] and not observacao:
+            raise forms.ValidationError({
+                'observacao_devolucao': 'Observação é obrigatória para status Danificado ou Perdido.'
+            })
+
+        # REMOVIDO: Validação de data_devolucao - é automática via método devolver()
 
         return cleaned_data
