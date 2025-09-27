@@ -47,14 +47,18 @@ def editar_emprestimo(request, id):
     if request.method == 'POST':
         form = EmprestimoForm(request.POST, instance=emprestimo)
         if form.is_valid():
-            if form.has_changed():
-                try:
-                    form.save()
-                    messages.success(request, "✅ Empréstimo atualizado com sucesso!")
-                except Exception as e:
-                    messages.error(request, f"❌ Erro ao atualizar empréstimo: {str(e)}")
-            else:
-                messages.info(request, "ℹ️ Nenhuma alteração foi realizada.")
+            # VERIFICA SE MUDOU PARA STATUS DE DEVOLUÇÃO
+            novo_status = form.cleaned_data.get('status')
+            observacao = form.cleaned_data.get('observacao_devolucao', '')
+            
+            # CORREÇÃO: SEMPRE preenche a data quando for status de devolução
+            if novo_status in ['DEVOLVIDO', 'DANIFICADO', 'PERDIDO']:
+                form.instance.data_devolucao = timezone.now()  # Sempre atualiza a data
+            
+            # SALVA NORMALMENTE
+            form.save()
+            messages.success(request, "✅ Empréstimo atualizado com sucesso!")
+            
             return redirect('lista_emprestimos')
         else:
             # Debug: mostrar erros do formulário
@@ -66,7 +70,7 @@ def editar_emprestimo(request, id):
 
     return render(request, 'emprestimos/form.html', {
         'form': form, 
-        'emprestimo': emprestimo,  # Passa o objeto emprestimo para o template
+        'emprestimo': emprestimo,
         "colaboradores": colaboradores,
         "epis": epis
     })
@@ -83,7 +87,6 @@ def devolver_emprestimo(request, pk):
             return redirect('lista_emprestimos')
         
         try:
-            # CORREÇÃO CRÍTICA: Atualizar estoque de danificados
             if status == 'DANIFICADO':
                 emprestimo.epi.quantidade_danificada += emprestimo.quantidade
                 emprestimo.epi.save()
@@ -125,11 +128,16 @@ def marcar_perdido(request, pk):
 
 def relatorios_emprestimos(request):
     colaborador_nome = request.GET.get('colaborador', '')
+    epi_nome = request.GET.get('epi', '') 
     status_filter = request.GET.get('status', '')
+    
     emprestimos = Emprestimo.objects.all().order_by('-data_emprestimo')
     
     if colaborador_nome:
         emprestimos = emprestimos.filter(colaborador__nome__icontains=colaborador_nome)
+    
+    if epi_nome:
+        emprestimos = emprestimos.filter(epi__nome__icontains=epi_nome)
     
     if status_filter:
         emprestimos = emprestimos.filter(status=status_filter)
@@ -137,6 +145,7 @@ def relatorios_emprestimos(request):
     context = {
         'emprestimos': emprestimos,
         'colaborador_pesquisa': colaborador_nome,
+        'epi_pesquisa': epi_nome,  # NOVO
         'status_pesquisa': status_filter,
         'total_emprestimos': emprestimos.count(),
         'status_choices': Emprestimo.STATUS_CHOICES,
