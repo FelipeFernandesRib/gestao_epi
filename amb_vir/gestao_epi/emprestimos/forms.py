@@ -22,6 +22,7 @@ class EmprestimoForm(forms.ModelForm):
         instance = kwargs.get('instance')
         
         if not instance:
+            # Novo empréstimo: só mostra EMPRESTADO e FORNECIDO
             self.fields['status'].choices = [
                 ('EMPRESTADO', 'Emprestado'),
                 ('FORNECIDO', 'Fornecido'),
@@ -29,36 +30,44 @@ class EmprestimoForm(forms.ModelForm):
             self.fields['data_devolucao'].widget = forms.HiddenInput()
             self.fields['observacao_devolucao'].widget = forms.HiddenInput()
         else:
+            # Edição: mostra todos os status
             self.fields['data_devolucao'].required = False
             self.fields['observacao_devolucao'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
-        epi_id = cleaned_data.get("epi").id  # Pega o ID do EPI para garantir que estamos acessando a instância correta
+        epi = cleaned_data.get("epi")
         quantidade = cleaned_data.get("quantidade")
         status = cleaned_data.get("status")
         data_prevista_devolucao = cleaned_data.get("data_prevista_devolucao")
         data_devolucao = cleaned_data.get('data_devolucao')
         observacao = cleaned_data.get('observacao_devolucao')
 
-        try:
-            # Pega a instância do EPI novamente para garantir que a propriedade existe
-            epi_instance = Epi.objects.get(id=epi_id)
-            if quantidade > epi_instance.quantidade_disponivel:
-                raise forms.ValidationError(
-                    f"Quantidade solicitada ({quantidade}) maior que a disponível ({epi_instance.quantidade_disponivel})"
-                )
-        except Epi.DoesNotExist:
-            raise forms.ValidationError("EPI selecionado não existe.")
-        
-        if quantidade <= 0:
-            raise forms.ValidationError("A quantidade deve ser maior que zero.")
+        # Validação de quantidade vs estoque (CORRIGIDA para edição)
+        if epi and quantidade is not None:
+            # Se for edição, adiciona a quantidade atual ao estoque disponível
+            if self.instance and self.instance.pk:
+                quantidade_disponivel = epi.quantidade_disponivel + self.instance.quantidade
+            else:
+                quantidade_disponivel = epi.quantidade_disponivel
 
+            if quantidade > quantidade_disponivel:
+                raise forms.ValidationError({
+                    'quantidade': f"Quantidade solicitada ({quantidade}) maior que a disponível ({quantidade_disponivel})"
+                })
+        
+        if quantidade and quantidade <= 0:
+            raise forms.ValidationError({
+                'quantidade': 'A quantidade deve ser maior que zero.'
+            })
+
+        # Validação de data prevista
         if data_prevista_devolucao and data_prevista_devolucao <= timezone.now():
             raise forms.ValidationError({
                 'data_prevista_devolucao': 'A data prevista para devolução deve ser posterior à data e hora atuais.'
             })
 
+        # Validações condicionais para status de devolução
         if status in ['DEVOLVIDO', 'DANIFICADO', 'PERDIDO']:
             if not data_devolucao:
                 raise forms.ValidationError({
